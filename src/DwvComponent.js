@@ -9,7 +9,6 @@ import d1 from './assests/0002.DCM'
 import d2 from './assests/0003.DCM'
 import d3 from './assests/0004.DCM'
 import Link from '@mui/material/Link';
-import dicomParser from 'dicom-parser';
 import IconButton from '@mui/material/IconButton';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -96,8 +95,8 @@ class DwvComponent extends React.Component {
       dropboxClassName: 'dropBox',
       borderClassName: 'dropBoxBorder',
       hoverClassName: 'hover',
-      dicomText: 'This is the default DICOM text.', // Initial DICOM text
-      editingText: false, // Flag to indicate whether the text is being edited
+      dicomText: '', // Text to display in the dicomTextContainer
+      enableDicomText:false,
       dicomObj: {
         1: {
           filePath: './assests/0002.DCM',
@@ -119,21 +118,21 @@ class DwvComponent extends React.Component {
 
   }
 
-  handleEditClick = () => {
-    const obj = { ...this.state, editingText: true }
-    this.setState({ editingText: true });
-    setTimeout(() => {
-      console.log(this.state, 'state');
+  // handleEditClick = () => {
+  //   const obj = { ...this.state, editingText: true }
+  //   this.setState({ editingText: true });
+  //   setTimeout(() => {
+  //     console.log(this.state, 'state');
 
-    }, 1000)
-  };
+  //   }, 1000)
+  // };
 
-  handleSaveClick = () => {
-    // Save the edited text to the DICOM object or anywhere you need to save it
-    // For now, let's just console log it
-    console.log('Edited Text:', this.state.dicomText);
-    this.setState({ ...this.state, editingText: false });
-  };
+  // handleSaveClick = () => {
+  //   // Save the edited text to the DICOM object or anywhere you need to save it
+  //   // For now, let's just console log it
+  //   console.log('Edited Text:', this.state.dicomText);
+  //   this.setState({ ...this.state, editingText: false });
+  // };
 
   handleTextChange = event => {
     this.setState({ ...this.state, dicomText: event.target.value });
@@ -210,10 +209,12 @@ class DwvComponent extends React.Component {
           </Dialog>
         </Stack>
         <div className="lineBox"></div>
-        <div id="layerGroup0" className="layerGroup">
-
+        <div id="layerGroup0" className="layerGroup" style={{width: this.state.enableDicomText ? '50%' : '100%'}}>
           <div id="dropBox"></div>
         </div>
+
+        {/* dicom text container */}
+        {this.state.enableDicomText &&
         <div className='dicomTextContainer'>
           <textarea
             value={this.state.dicomText}
@@ -229,8 +230,7 @@ class DwvComponent extends React.Component {
               padding: '1rem'
             }}
           />
-
-        </div>
+        </div>}
 
         <div><p className="legend">
           <Typography variant="caption">Powered by <Link
@@ -338,13 +338,14 @@ class DwvComponent extends React.Component {
 
     // Possible load from location
     //app.loadFromUri(window.location.href);
-    // setTimeout(()=>{
-    //   console.log(this.setState,this.state,'statee');
-    // },1000)
+    
+    // read file according to query param
     if (id) {
       app.loadURLs([this.state.dicomObj[id].image])
       this.state.dicomText = this.state.dicomObj[id].text;
+      this.state.enableDicomText = true;
     }
+
   }
 
   fetchDICOMData = (path) => {
@@ -357,11 +358,7 @@ class DwvComponent extends React.Component {
       })
       .then(arrayBuffer => {
         // Convert ArrayBuffer to Uint8Array
-
         const byteArray = new Uint8Array(arrayBuffer);
-        // Parse DICOM data
-        console.log(byteArray, '11');
-        const dataSet = dicomParser.parseDicom(byteArray);
         // Return DICOM data as Blob
         return new Blob([byteArray], { type: 'application/dicom' });
       });
