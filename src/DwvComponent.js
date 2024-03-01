@@ -90,6 +90,7 @@ class DwvComponent extends React.Component {
       dwvApp: null,
       metaData: {},
       orientation: undefined,
+      windowWidth: window.innerWidth,
       showDicomTags: false,
       dropboxDivId: 'dropBox',
       dropboxClassName: 'dropBox',
@@ -141,7 +142,26 @@ class DwvComponent extends React.Component {
   render() {
     const { classes } = this.props;
     const { versions, tools, loadProgress, dataLoaded, metaData } = this.state;
+    const { windowWidth } = this.state;
 
+    // Calculate left value based on window width
+    let leftValue = '50%';
+    if (windowWidth >= 1200 && windowWidth < 1300) {
+      leftValue = '780px';
+    } else if (windowWidth < 1200) {
+      // Calculate left value based on window width if it's below 1200
+      // Adjust the calculation as per your requirements
+      leftValue = `${780 - (1200-windowWidth) }px`;
+    }
+    else{
+      leftValue = `${680 + (windowWidth-1200) }px`;
+    }
+
+    // Dynamically set style for dicomTextContainer
+    const dicomTextContainerStyle = {
+      
+      left: leftValue // Update left value dynamically
+    };
     const handleToolChange = (event, newTool) => {
       if (newTool) {
         this.onChangeTool(newTool);
@@ -155,6 +175,8 @@ class DwvComponent extends React.Component {
         </ToggleButton>
       );
     });
+
+
 
     return (
       <div id="dwv">
@@ -209,13 +231,13 @@ class DwvComponent extends React.Component {
           </Dialog>
         </Stack>
         <div className="lineBox"></div>
-        <div id="layerGroup0" className="layerGroup" style={{width: this.state.enableDicomText ? '50%' : '100%'}}>
+        <div id="layerGroup0" className="layerGroup"  style={{width: this.state.enableDicomText ? '50%' : '100%'}}>
           <div id="dropBox"></div>
         </div>
 
         {/* dicom text container */}
         {this.state.enableDicomText &&
-        <div className='dicomTextContainer'>
+       <div className='dicomTextContainer' style={dicomTextContainerStyle}>
           <textarea
             value={this.state.dicomText}
             onChange={(e) => {
@@ -249,6 +271,9 @@ class DwvComponent extends React.Component {
     );
   }
 
+  handleResize = () => {
+    this.setState({ windowWidth: window.innerWidth });
+  }
   componentDidMount() {
     // Import images
 
@@ -312,6 +337,7 @@ class DwvComponent extends React.Component {
         this.showDropbox(app, true);
       }
     });
+    window.addEventListener('resize', this.handleResize);
     app.addEventListener('loaditem', (/*event*/) => {
       ++nLoadItem;
     });
