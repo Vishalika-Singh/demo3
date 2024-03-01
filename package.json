@@ -20,7 +20,7 @@
     "canvas": "^2.11.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start --open --port 3004",
     "build": "react-scripts build",
     "build-trunk": "PUBLIC_URL=/dwv-react/demo/trunk/ react-scripts build",
     "build-stable": "PUBLIC_URL=/dwv-react/demo/stable/ react-scripts build",
