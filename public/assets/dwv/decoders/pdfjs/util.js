@@ -513,6 +513,7 @@ Object.defineProperty(PDFJS, 'isLittleEndian', {
 //#if !(FIREFOX || MOZCENTRAL || B2G || CHROME)
 //// Lazy test if the userAgant support CanvasTypedArrays
 function hasCanvasTypedArrays() {
+  console.log('yashu');
   var canvas = document.createElement('canvas');
   canvas.width = canvas.height = 1;
   var ctx = canvas.getContext('2d');
