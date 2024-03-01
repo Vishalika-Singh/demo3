@@ -5,7 +5,9 @@ import Typography from '@mui/material/Typography';
 
 import Stack from '@mui/material/Stack';
 import LinearProgress from '@mui/material/LinearProgress';
-
+import d1 from './assests/0002.DCM'
+import d2 from './assests/0003.DCM'
+import d3 from './assests/0004.DCM'
 import Link from '@mui/material/Link';
 import IconButton from '@mui/material/IconButton';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -50,7 +52,15 @@ const styles = theme => ({
   },
   iconSmall: {
     fontSize: 20,
-  }
+  },
+  dicomTextContainer: {
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    padding: '8px',
+    margin: '8px 0',
+    minHeight: '100px', // Adjust height as needed
+    overflowY: 'auto',
+  },
 });
 
 export const TransitionUp = React.forwardRef((props, ref) => (
@@ -80,39 +90,101 @@ class DwvComponent extends React.Component {
       dwvApp: null,
       metaData: {},
       orientation: undefined,
+      windowWidth: window.innerWidth,
       showDicomTags: false,
       dropboxDivId: 'dropBox',
       dropboxClassName: 'dropBox',
       borderClassName: 'dropBoxBorder',
-      hoverClassName: 'hover'
+      hoverClassName: 'hover',
+      dicomText: '', // Text to display in the dicomTextContainer
+      enableDicomText:false,
+      dicomObj: {
+        1: {
+          filePath: './assests/0002.DCM',
+          image: d1,
+          text: 'This is a DICOM image 1.'
+        },
+        2: {
+          filePath: './assests/0002.DCM',
+          image: d2,
+          text: 'This is a DICOM image 2.'
+        },
+        3: {
+          filePath: './assests/0002.DCM',
+          image: d3,
+          text: 'This is a DICOM image 3.'
+        }
+      }
     };
+
   }
+
+  // handleEditClick = () => {
+  //   const obj = { ...this.state, editingText: true }
+  //   this.setState({ editingText: true });
+  //   setTimeout(() => {
+  //     console.log(this.state, 'state');
+
+  //   }, 1000)
+  // };
+
+  // handleSaveClick = () => {
+  //   // Save the edited text to the DICOM object or anywhere you need to save it
+  //   // For now, let's just console log it
+  //   console.log('Edited Text:', this.state.dicomText);
+  //   this.setState({ ...this.state, editingText: false });
+  // };
+
+  handleTextChange = event => {
+    this.setState({ ...this.state, dicomText: event.target.value });
+  };
 
   render() {
     const { classes } = this.props;
     const { versions, tools, loadProgress, dataLoaded, metaData } = this.state;
+    const { windowWidth } = this.state;
 
+    // Calculate left value based on window width
+    let leftValue = '50%';
+    if (windowWidth >= 1200 && windowWidth < 1300) {
+      leftValue = '780px';
+    } else if (windowWidth < 1200) {
+      // Calculate left value based on window width if it's below 1200
+      // Adjust the calculation as per your requirements
+      leftValue = `${780 - (1200-windowWidth) }px`;
+    }
+    else{
+      leftValue = `${680 + (windowWidth-1200) }px`;
+    }
+
+    // Dynamically set style for dicomTextContainer
+    const dicomTextContainerStyle = {
+      
+      left: leftValue // Update left value dynamically
+    };
     const handleToolChange = (event, newTool) => {
       if (newTool) {
         this.onChangeTool(newTool);
       }
     };
-    const toolsButtons = Object.keys(tools).map( (tool) => {
+    const toolsButtons = Object.keys(tools).map((tool) => {
       return (
         <ToggleButton value={tool} key={tool} title={tool}
           disabled={!dataLoaded || !this.canRunTool(tool)}>
-          { this.getToolIcon(tool) }
+          {this.getToolIcon(tool)}
         </ToggleButton>
       );
     });
 
+
+
     return (
       <div id="dwv">
         <LinearProgress variant="determinate" value={loadProgress} />
-        <Stack direction="row" spacing={1} padding={1} justifyContent="center">
+        <Stack direction="row" spacing={1} padding={1} justifyContent="start">
           <ToggleButtonGroup size="small"
             color="primary"
-            value={ this.state.selectedTool }
+            value={this.state.selectedTool}
             exclusive
             onChange={handleToolChange}
           >
@@ -144,34 +216,53 @@ class DwvComponent extends React.Component {
             open={this.state.showDicomTags}
             onClose={this.handleTagsDialogClose}
             TransitionComponent={TransitionUp}
-            >
-              <AppBar className={classes.appBar} position="sticky">
-                <Toolbar>
-                  <IconButton color="inherit" onClick={this.handleTagsDialogClose} aria-label="Close">
-                    <CloseIcon />
-                  </IconButton>
-                  <Typography variant="h6" color="inherit" className={classes.flex}>
-                    DICOM Tags
-                  </Typography>
-                </Toolbar>
-              </AppBar>
-              <TagsTable data={metaData} />
+          >
+            <AppBar className={classes.appBar} position="sticky">
+              <Toolbar>
+                <IconButton color="inherit" onClick={this.handleTagsDialogClose} aria-label="Close">
+                  <CloseIcon />
+                </IconButton>
+                <Typography variant="h6" color="inherit" className={classes.flex}>
+                  DICOM Tags
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <TagsTable data={metaData} />
           </Dialog>
         </Stack>
-
-        <div id="layerGroup0" className="layerGroup">
+        <div className="lineBox"></div>
+        <div id="layerGroup0" className="layerGroup"  style={{width: this.state.enableDicomText ? '50%' : '100%'}}>
           <div id="dropBox"></div>
         </div>
 
+        {/* dicom text container */}
+        {this.state.enableDicomText &&
+       <div className='dicomTextContainer' style={dicomTextContainerStyle}>
+          <textarea
+            value={this.state.dicomText}
+            onChange={(e) => {
+              this.setState({ dicomText: e.target.value });
+            }}
+            rows={8} // Specify the number of rows
+            cols={30} // Specify the number of columns
+            style={{
+              fontSize: '16px', // Increase font size to 16px
+              fontFamily: 'sans-serif', // Specify font family
+              fontWeight: 'bold', // Make the text bold
+              padding: '1rem'
+            }}
+          />
+        </div>}
+
         <div><p className="legend">
           <Typography variant="caption">Powered by <Link
-              href="https://github.com/ivmartel/dwv"
-              title="dwv on github"
-              color="inherit">dwv
-            </Link> {versions.dwv} and <Link
-              href="https://github.com/facebook/react"
-              title="react on github"
-              color="inherit">React
+            href="https://github.com/ivmartel/dwv"
+            title="dwv on github"
+            color="inherit">dwv
+          </Link> {versions.dwv} and <Link
+            href="https://github.com/facebook/react"
+            title="react on github"
+            color="inherit">React
             </Link> {versions.react}
           </Typography>
         </p></div>
@@ -180,36 +271,44 @@ class DwvComponent extends React.Component {
     );
   }
 
+  handleResize = () => {
+    this.setState({ windowWidth: window.innerWidth });
+  }
   componentDidMount() {
-    // create app
+    // Import images
+
+    // Create app
     const app = new App();
-    // initialise app
+    const queryParams = new URLSearchParams(window.location.search);
+    const id = queryParams.get('id');
+
+    // Initialise app
     app.init({
-      "dataViewConfigs": {'*': [{divId: 'layerGroup0'}]},
+      "dataViewConfigs": { '*': [{ divId: 'layerGroup0' }] },
       "tools": this.state.tools
     });
 
-    // load events
+    // Load events
     let nLoadItem = null;
     let nReceivedLoadError = null;
     let nReceivedLoadAbort = null;
     let isFirstRender = null;
     app.addEventListener('loadstart', (/*event*/) => {
-      // reset flags
+      // Reset flags
       nLoadItem = 0;
       nReceivedLoadError = 0;
       nReceivedLoadAbort = 0;
       isFirstRender = true;
-      // hide drop box
+      // Hide drop box
       this.showDropbox(app, false);
     });
     app.addEventListener("loadprogress", (event) => {
-      this.setState({loadProgress: event.loaded});
+      this.setState({ loadProgress: event.loaded });
     });
     app.addEventListener('renderend', (/*event*/) => {
       if (isFirstRender) {
         isFirstRender = false;
-        // available tools
+        // Available tools
         let selectedTool = 'ZoomAndPan';
         if (app.canScroll()) {
           selectedTool = 'Scroll';
@@ -218,26 +317,27 @@ class DwvComponent extends React.Component {
       }
     });
     app.addEventListener("load", (/*event*/) => {
-      // set dicom tags
-      this.setState({metaData: app.getMetaData(0)});
-      // set data loaded flag
-      this.setState({dataLoaded: true});
+      // Set DICOM tags
+      this.setState({ metaData: app.getMetaData(0) });
+      // Set data loaded flag
+      this.setState({ dataLoaded: true });
     });
     app.addEventListener('loadend', (/*event*/) => {
       if (nReceivedLoadError) {
-        this.setState({loadProgress: 0});
+        this.setState({ loadProgress: 0 });
         alert('Received errors during load. Check log for details.');
-        // show drop box if nothing has been loaded
+        // Show drop box if nothing has been loaded
         if (!nLoadItem) {
           this.showDropbox(app, true);
         }
       }
       if (nReceivedLoadAbort) {
-        this.setState({loadProgress: 0});
+        this.setState({ loadProgress: 0 });
         alert('Load was aborted.');
         this.showDropbox(app, true);
       }
     });
+    window.addEventListener('resize', this.handleResize);
     app.addEventListener('loaditem', (/*event*/) => {
       ++nLoadItem;
     });
@@ -249,21 +349,45 @@ class DwvComponent extends React.Component {
       ++nReceivedLoadAbort;
     });
 
-    // handle key events
+    // Handle key events
     app.addEventListener('keydown', (event) => {
       app.defaultOnKeydown(event);
     });
-    // handle window resize
+    // Handle window resize
     window.addEventListener('resize', app.onResize);
 
-    // store
-    this.setState({dwvApp: app});
+    // Store app
+    this.setState({ dwvApp: app });
 
-    // setup drop box
+    // Setup drop box
     this.setupDropbox(app);
 
-    // possible load from location
-    app.loadFromUri(window.location.href);
+    // Possible load from location
+    //app.loadFromUri(window.location.href);
+    
+    // read file according to query param
+    if (id) {
+      app.loadURLs([this.state.dicomObj[id].image])
+      this.state.dicomText = this.state.dicomObj[id].text;
+      this.state.enableDicomText = true;
+    }
+
+  }
+
+  fetchDICOMData = (path) => {
+    return fetch(path)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.arrayBuffer();
+      })
+      .then(arrayBuffer => {
+        // Convert ArrayBuffer to Uint8Array
+        const byteArray = new Uint8Array(arrayBuffer);
+        // Return DICOM data as Blob
+        return new Blob([byteArray], { type: 'application/dicom' });
+      });
   }
 
   /**
@@ -292,7 +416,7 @@ class DwvComponent extends React.Component {
    */
   onChangeTool = (tool) => {
     if (this.state.dwvApp) {
-      this.setState({selectedTool: tool});
+      this.setState({ selectedTool: tool });
       this.state.dwvApp.setTool(tool);
       if (tool === 'Draw') {
         this.onChangeShape(this.state.tools.Draw.options[0]);
@@ -356,7 +480,7 @@ class DwvComponent extends React.Component {
    */
   onChangeShape = (shape) => {
     if (this.state.dwvApp) {
-      this.state.dwvApp.setToolFeatures({shapeName: shape});
+      this.state.dwvApp.setToolFeatures({ shapeName: shape });
     }
   }
 
@@ -411,7 +535,7 @@ class DwvComponent extends React.Component {
     // update box border
     const box = document.getElementById(this.state.dropboxDivId);
     if (box && box.className.indexOf(this.state.hoverClassName) === -1) {
-        box.className += ' ' + this.state.hoverClassName;
+      box.className += ' ' + this.state.hoverClassName;
     }
   }
 
@@ -424,7 +548,7 @@ class DwvComponent extends React.Component {
     // update box class
     const box = document.getElementById(this.state.dropboxDivId);
     if (box && box.className.indexOf(this.state.hoverClassName) !== -1) {
-        box.className = box.className.replace(' ' + this.state.hoverClassName, '');
+      box.className = box.className.replace(' ' + this.state.hoverClassName, '');
     }
   }
 
@@ -444,6 +568,7 @@ class DwvComponent extends React.Component {
    */
   onInputFile = (event) => {
     if (event.target && event.target.files) {
+      console.log(event.target.files, 'yashu');
       this.state.dwvApp.loadFiles(event.target.files);
     }
   }
