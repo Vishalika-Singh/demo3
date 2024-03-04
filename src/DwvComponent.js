@@ -5,24 +5,6 @@ import Typography from '@mui/material/Typography';
 
 import Stack from '@mui/material/Stack';
 import LinearProgress from '@mui/material/LinearProgress';
-//import d1 from './assests/0002.DCM'
-import d1 from './assests/sample/brain/1.dcm'
-import d2 from './assests/0003.DCM'
-import d3 from './assests/0004.DCM'
-
-import d4 from './assests/series-00000/image-00000.dcm'
-import d5 from './assests/series-00000/image-00001.dcm'
-import d6 from './assests/series-00000/image-00002.dcm'
-import d7 from './assests/series-00000/image-00003.dcm'
-import d8 from './assests/series-00000/image-00004.dcm'
-import d9 from './assests/series-00000/image-00005.dcm'
-import d10 from './assests/series-00000/image-00006.dcm'
-import d11 from './assests/series-00000/image-00007.dcm'
-import d12 from './assests/series-00000/image-00008.dcm'
-import d13 from './assests/series-00000/image-00009.dcm'
-import d14 from './assests/series-00000/image-00010.dcm'
-import d15 from './assests/series-00000/image-00011.dcm'
-
 import Link from '@mui/material/Link';
 import IconButton from '@mui/material/IconButton';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -123,24 +105,19 @@ class DwvComponent extends React.Component {
       enableDicomText: false,
       dicomObj: {
         1: {
-          filePath: './assests/0002.DCM',
-          image: [d1],
-          text: 'This is a DICOM image 1.'
+          folderPath: 'sample/brain',
         },
         2: {
-          filePath: './assests/0002.DCM',
-          image: [d2],
-          text: 'This is a DICOM image 2.'
+          folderPath: 'sample/skull_bone',
         },
         3: {
-          filePath: './assests/0002.DCM',
-          image: [d3],
-          text: 'This is a DICOM image 3.'
+          folderPath: 'series-00000',
         },
         4: {
-          filePath: './assests/0002.DCM',
-          image: [d4, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15],
-          text: 'This is a DICOM image 4.'
+          folderPath: 'test1',
+        },
+        5: {
+          folderPath: 'test2',
         }
       }
     };
@@ -433,15 +410,18 @@ class DwvComponent extends React.Component {
     if (id) {
       this.state.currentUserId = id;
       this.state.enableDicomText = true;
+      const folder = this.state.dicomObj[id].folderPath
       this.getDicomText()
-      app.loadURLs(this.state.dicomObj[id].image)
-    }
+      // load dicom file
+      try {
+        const path = `./assests/${folder}`
+        console.log(path,"folder")
+        const dicImages = importAll(require.context('./assests/series-00000', false, /\.(dcm|jpe?g|svg)$/));
+        app.loadURLs(dicImages);
+      } catch (error) {
+        console.log(error);
+      }
 
-    try {
-      const dicImages = importAll(require.context('./assests/series-00000', false, /\.(dcm|jpe?g|svg)$/));
-      app.loadURLs(dicImages);
-    } catch (error) {
-      console.log(error);
     }
 
   }
