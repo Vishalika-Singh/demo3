@@ -5,6 +5,7 @@
   "author": "ivmartel",
   "license": "GPL-3.0",
   "private": true,
+  "homepage": "/demo3",
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
@@ -21,7 +22,7 @@
     "canvas": "^2.11.2"
   },
   "scripts": {
-    "start": "react-scripts start --open --port 3004",
+    "start": "PORT=3004 react-scripts start",
     "build": "react-scripts build",
     "build-trunk": "PUBLIC_URL=/dwv-react/demo/trunk/ react-scripts build",
     "build-stable": "PUBLIC_URL=/dwv-react/demo/stable/ react-scripts build",
