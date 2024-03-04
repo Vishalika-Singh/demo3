@@ -34,6 +34,7 @@ import {
   decoderScripts
 } from 'dwv';
 import preval from 'babel-plugin-preval/macro'
+import { Button } from '@mui/material';
 
 // Image decoders (for web workers)
 decoderScripts.jpeg2000 = `${process.env.PUBLIC_URL}/assets/dwv/decoders/pdfjs/decode-jpeg2000.js`;
@@ -271,31 +272,34 @@ class DwvComponent extends React.Component {
           </Dialog>
         </Stack>
         <div className="lineBox"></div>
-        <div id="layerGroup0" className="layerGroup" style={{ width: this.state.enableDicomText ? '50%' : '100%' }}>
+        <div id="layerGroup0" className="layerGroup" sstyle={{ width: this.state.enableDicomText ? '50%' : '100%' }}>
           <div id="dropBox"></div>
         </div>
 
         {/* dicom text container */}
         {this.state.enableDicomText &&
-          <div className='dicomTextContainer' style={dicomTextContainerStyle}>
+          <div className='dicomTextContainer' sstyle={dicomTextContainerStyle}>
             <textarea
               value={this.state.dicomText}
               onChange={(e) => {
                 this.setState({ dicomText: e.target.value });
               }}
-              rows={30} // Specify the number of rows
-              cols={40} // Specify the number of columns
+              rows={3} // Specify the number of rows
+              // cols={40} // Specify the number of columns
               style={{
+                width: '-webkit-fill-available',
                 fontSize: '16px', // Increase font size to 16px
                 fontFamily: 'sans-serif', // Specify font family
-                fontWeight: 'bold', // Make the text bold
-                padding: '1rem'
+                // fontWeight: 'bold', // Make the text bold
+                padding: '5px',
+                margin: '10px 15px'
               }}
             />
-            <button onClick={this.handleSaveClick}>Save</button>
+            <Button variant="contained"  onClick={this.handleSaveClick} > Save </Button>
+            {/* <button onClick={this.handleSaveClick}>Save</button> */}
           </div>}
 
-        <div><p className="legend">
+        {/* <div><p className="legend">
           <Typography variant="caption">Powered by <Link
             href="https://github.com/ivmartel/dwv"
             title="dwv on github"
@@ -306,7 +310,7 @@ class DwvComponent extends React.Component {
             color="inherit">React
             </Link> {versions.react}
           </Typography>
-        </p></div>
+        </p></div> */}
 
       </div>
     );
@@ -410,14 +414,38 @@ class DwvComponent extends React.Component {
     if (id) {
       this.state.currentUserId = id;
       this.state.enableDicomText = true;
-      const folder = this.state.dicomObj[id].folderPath
+      const folder = this.state.dicomObj[id].folderPath;
+      let path = `./assests`;
+      let dicImagesT = [];
+      switch(Number(id)){
+        case 1 : 
+         dicImagesT = importAll(require.context(`./assests/sample/brain`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/sample/brain`;
+          break;
+        case 2: 
+          dicImagesT = importAll(require.context(`./assests/sample/skull_bone`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/sample/skull_bone`;
+          break;
+        case 3: 
+        dicImagesT = importAll(require.context(`./assests/series-00000`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/series-00000`;
+          break;
+        case 4: 
+        dicImagesT = importAll(require.context(`./assests/test1`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/test1`;
+          break;
+        case 5: 
+        dicImagesT = importAll(require.context(`./assests/test2`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/test2`;
+          break;
+        default:
+          dicImagesT = importAll(require.context(`./assests/test1`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/test2`;
+      }
       this.getDicomText()
       // load dicom file
       try {
-        const path = `./assests/${folder}`
-        console.log(path,"folder")
-        const dicImages = importAll(require.context('./assests/series-00000', false, /\.(dcm|jpe?g|svg)$/));
-        app.loadURLs(dicImages);
+        app.loadURLs(dicImagesT);
       } catch (error) {
         console.log(error);
       }
