@@ -222,7 +222,7 @@ class DwvComponent extends React.Component {
     return (
       <div id="dwv">
         <LinearProgress variant="determinate" value={loadProgress} />
-        <Stack direction="row" spacing={1} padding={1} justifyContent="start">
+        <Stack  direction="row" spacing={1} padding={1} justifyContent="center">
           <ToggleButtonGroup size="small"
             color="primary"
             value={this.state.selectedTool}
@@ -272,12 +272,48 @@ class DwvComponent extends React.Component {
           </Dialog>
         </Stack>
         <div className="lineBox"></div>
-        <div id="layerGroup0" className="layerGroup" sstyle={{ width: this.state.enableDicomText ? '50%' : '100%' }}>
+        <div style={{
+          display:'flex',
+          flexDirection: 'row',
+          height:'100%'
+          // justifyContent: 'space-between',
+          // alignItems: 'center',
+          // width: '100%'
+        }}>
+        <div id="layerGroup0" className="layerGroup" style={{flex:1}} sstyle={{ width: this.state.enableDicomText ? '50%' : '100%' }}>
           <div id="dropBox"></div>
         </div>
+        {
+          this.state.enableDicomText && 
+          <div className='dicomTextContainer' sstyle={dicomTextContainerStyle}>
+            <textarea
+              value={this.state.dicomText}
+              onChange={(e) => {
+                this.setState({ dicomText: e.target.value });
+              }}
+              rows={27} // Specify the number of rows
+              // cols={40} // Specify the number of columns
+              style={{
+                width: '-webkit-fill-available',
+                fontSize: '16px', // Increase font size to 16px
+                fontFamily: 'sans-serif', // Specify font family
+                // fontWeight: 'bold', // Make the text bold
+                padding: '5px',
+                margin: '10px 15px',
+                marginTop : '0px',
+                height:'90%',
+              }}
+            />
+            <Button variant="contained"  onClick={this.handleSaveClick} > Save </Button>
+            {/* <button onClick={this.handleSaveClick}>Save</button> */}
+          </div>
+        }
+        
+        </div>
+        
 
         {/* dicom text container */}
-        {this.state.enableDicomText &&
+        {this.state.enableDicomText && false &&
           <div className='dicomTextContainer' sstyle={dicomTextContainerStyle}>
             <textarea
               value={this.state.dicomText}

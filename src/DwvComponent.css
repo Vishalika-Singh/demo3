@@ -4,6 +4,9 @@
 .button-row {
   text-align: center;
 }
+body{
+  overflow: hidden;
+}
 
 /* #layerGroup0{
   display: flex;
@@ -30,7 +33,7 @@
   position: relative;
   padding: 0;
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   height: 90%;
 }
 .layer {
