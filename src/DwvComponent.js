@@ -431,21 +431,21 @@ class DwvComponent extends React.Component {
       app.loadURLs(this.state.dicomObj[id].image)
     }
 
-    try {
-      const dirPath = '/Users/bigstep/Desktop/wish/dicom_viewer/dwv-react/src/assests/';
-      const folder = 'series-00000';
-      const filesystem = preval`
-      const path = require('path');
-      const fs = require('fs');
-      const files = fs.readdirSync(\`${dirPath}${folder}\`);
-      const filePaths = files.map(file => path.join(\`${dirPath}${folder}\`, file));
-      module.exports = filePaths
-    `;
-     //app.loadFromUri(['http://localhost:3000/src/assests/sample/brain/1.dcm']);
-      console.log(filesystem,__dirname);
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   const dirPath = '/Users/bigstep/Desktop/wish/dicom_viewer/dwv-react/src/assests/';
+    //   const folder = 'series-00000';
+    //   const filesystem = preval`
+    //   const path = require('path');
+    //   const fs = require('fs');
+    //   const files = fs.readdirSync(\`${dirPath}${folder}\`);
+    //   const filePaths = files.map(file => path.join(\`${dirPath}${folder}\`, file));
+    //   module.exports = filePaths
+    // `;
+    //  //app.loadFromUri(['http://localhost:3000/src/assests/sample/brain/1.dcm']);
+    //   console.log(filesystem,__dirname);
+    // } catch (error) {
+    //   console.log(error);
+    // }
 
   }
 
