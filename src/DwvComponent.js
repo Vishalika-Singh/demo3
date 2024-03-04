@@ -5,7 +5,8 @@ import Typography from '@mui/material/Typography';
 
 import Stack from '@mui/material/Stack';
 import LinearProgress from '@mui/material/LinearProgress';
-import d1 from './assests/0002.DCM'
+//import d1 from './assests/0002.DCM'
+import d1 from './assests/sample/brain/1.dcm'
 import d2 from './assests/0003.DCM'
 import d3 from './assests/0004.DCM'
 
@@ -50,6 +51,7 @@ import {
   getDwvVersion,
   decoderScripts
 } from 'dwv';
+import preval from 'babel-plugin-preval/macro'
 
 // Image decoders (for web workers)
 decoderScripts.jpeg2000 = `${process.env.PUBLIC_URL}/assets/dwv/decoders/pdfjs/decode-jpeg2000.js`;
@@ -111,7 +113,8 @@ class DwvComponent extends React.Component {
       borderClassName: 'dropBoxBorder',
       hoverClassName: 'hover',
       dicomText: '', // Text to display in the dicomTextContainer
-      enableDicomText:false,
+      currentUserId:'',
+      enableDicomText: false,
       dicomObj: {
         1: {
           filePath: './assests/0002.DCM',
@@ -130,7 +133,7 @@ class DwvComponent extends React.Component {
         },
         4: {
           filePath: './assests/0002.DCM',
-          image: [d4,d5,d6,d7,d8,d9,d10,d11,d12,d13,d14,d15],
+          image: [d4, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15],
           text: 'This is a DICOM image 4.'
         }
       }
@@ -138,22 +141,59 @@ class DwvComponent extends React.Component {
 
   }
 
-  // handleEditClick = () => {
-  //   const obj = { ...this.state, editingText: true }
-  //   this.setState({ editingText: true });
-  //   setTimeout(() => {
-  //     console.log(this.state, 'state');
+  handleSaveClick = () => {
+    const endpoint = `http://dev.radpretation.ai/api/pub/dicom-description/${this.state.currentUserId}`;
+    // Make a POST request
+    fetch(endpoint, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        description: this.state.dicomText,
+      }),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Save successful:', data);
+      // You can perform additional actions after a successful save
+      window.alert('Data is updated successfully!');
+    })
+    .catch(error => {
+      console.error('Save error:', error);
+      // Handle error scenarios
+    });
+  };
 
-  //   }, 1000)
-  // };
-
-  // handleSaveClick = () => {
-  //   // Save the edited text to the DICOM object or anywhere you need to save it
-  //   // For now, let's just console log it
-  //   console.log('Edited Text:', this.state.dicomText);
-  //   this.setState({ ...this.state, editingText: false });
-  // };
-
+  getDicomText = () => {
+    const endpoint = `http://dev.radpretation.ai/api/pub/get-dicom-description?id=${this.state.currentUserId}`;
+    // Make a POST request
+    fetch(endpoint, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      this.setState({ dicomText: data.data.dicomDesc });
+    })
+    .catch(error => {
+      console.error('GET error:', error);
+      // Handle error scenarios
+    });
+  };
+  
   handleTextChange = event => {
     this.setState({ ...this.state, dicomText: event.target.value });
   };
@@ -170,15 +210,15 @@ class DwvComponent extends React.Component {
     } else if (windowWidth < 1200) {
       // Calculate left value based on window width if it's below 1200
       // Adjust the calculation as per your requirements
-      leftValue = `${780 - (1200-windowWidth) }px`;
+      leftValue = `${780 - (1200 - windowWidth)}px`;
     }
-    else{
-      leftValue = `${680 + (windowWidth-1200) }px`;
+    else {
+      leftValue = `${680 + (windowWidth - 1200)}px`;
     }
 
     // Dynamically set style for dicomTextContainer
     const dicomTextContainerStyle = {
-      
+
       left: leftValue // Update left value dynamically
     };
     const handleToolChange = (event, newTool) => {
@@ -194,8 +234,6 @@ class DwvComponent extends React.Component {
         </ToggleButton>
       );
     });
-
-
 
     return (
       <div id="dwv">
@@ -250,28 +288,29 @@ class DwvComponent extends React.Component {
           </Dialog>
         </Stack>
         <div className="lineBox"></div>
-        <div id="layerGroup0" className="layerGroup"  style={{width: this.state.enableDicomText ? '50%' : '100%'}}>
+        <div id="layerGroup0" className="layerGroup" style={{ width: this.state.enableDicomText ? '50%' : '100%' }}>
           <div id="dropBox"></div>
         </div>
 
         {/* dicom text container */}
         {this.state.enableDicomText &&
-       <div className='dicomTextContainer' style={dicomTextContainerStyle}>
-          <textarea
-            value={this.state.dicomText}
-            onChange={(e) => {
-              this.setState({ dicomText: e.target.value });
-            }}
-            rows={8} // Specify the number of rows
-            cols={30} // Specify the number of columns
-            style={{
-              fontSize: '16px', // Increase font size to 16px
-              fontFamily: 'sans-serif', // Specify font family
-              fontWeight: 'bold', // Make the text bold
-              padding: '1rem'
-            }}
-          />
-        </div>}
+          <div className='dicomTextContainer' style={dicomTextContainerStyle}>
+            <textarea
+              value={this.state.dicomText}
+              onChange={(e) => {
+                this.setState({ dicomText: e.target.value });
+              }}
+              rows={30} // Specify the number of rows
+              cols={40} // Specify the number of columns
+              style={{
+                fontSize: '16px', // Increase font size to 16px
+                fontFamily: 'sans-serif', // Specify font family
+                fontWeight: 'bold', // Make the text bold
+                padding: '1rem'
+              }}
+            />
+            <button onClick={this.handleSaveClick}>Save</button>
+          </div>}
 
         <div><p className="legend">
           <Typography variant="caption">Powered by <Link
@@ -383,12 +422,29 @@ class DwvComponent extends React.Component {
 
     // Possible load from location
     //app.loadFromUri(window.location.href);
-    
+
     // read file according to query param
     if (id) {
-      app.loadURLs(this.state.dicomObj[id].image)
-      this.state.dicomText = this.state.dicomObj[id].text;
+      this.state.currentUserId = id;
       this.state.enableDicomText = true;
+      this.getDicomText()
+      app.loadURLs(this.state.dicomObj[id].image)
+    }
+
+    try {
+      const dirPath = '/Users/bigstep/Desktop/wish/dicom_viewer/dwv-react/src/assests/';
+      const folder = 'series-00000';
+      const filesystem = preval`
+      const path = require('path');
+      const fs = require('fs');
+      const files = fs.readdirSync(\`${dirPath}${folder}\`);
+      const filePaths = files.map(file => path.join(\`${dirPath}${folder}\`, file));
+      module.exports = filePaths
+    `;
+     //app.loadFromUri(['http://localhost:3000/src/assests/sample/brain/1.dcm']);
+      console.log(filesystem,__dirname);
+    } catch (error) {
+      console.log(error);
     }
 
   }
