@@ -450,7 +450,6 @@ class DwvComponent extends React.Component {
     if (id) {
       this.state.currentUserId = id;
       this.state.enableDicomText = true;
-      const folder = this.state.dicomObj[id].folderPath;
       let path = `./assests`;
       let dicImagesT = [];
       switch(Number(id)){
@@ -473,6 +472,22 @@ class DwvComponent extends React.Component {
         case 5: 
         dicImagesT = importAll(require.context(`./assests/test2`, false, /\.(dcm|DCM|jpe?g|svg)$/));
           path = `${path}/test2`;
+          break;
+        case 6: 
+        dicImagesT = importAll(require.context(`./assests/101453181/20210301/brain`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/101453181/20210301/brain`;
+          break;
+        case 7: 
+        dicImagesT = importAll(require.context(`./assests/101453181/20210301/skull_bone`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/101453181/20210301/skull_bone`;
+          break;
+        case 8: 
+        dicImagesT = importAll(require.context(`./assests/101453181/20210303/brain`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/101453181/20210303/brain`;
+          break;
+        case 9: 
+        dicImagesT = importAll(require.context(`./assests/101453181/20210303/skull_bone`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/101453181/20210303/skull_bone`;
           break;
         default:
           dicImagesT = importAll(require.context(`./assests/test1`, false, /\.(dcm|DCM|jpe?g|svg)$/));
