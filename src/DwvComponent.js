@@ -453,45 +453,49 @@ class DwvComponent extends React.Component {
       let path = `./assests`;
       let dicImagesT = [];
       switch(Number(id)){
-        case 1 : 
-         dicImagesT = importAll(require.context(`./assests/sample/brain`, false, /\.(dcm|DCM|jpe?g|svg)$/));
-          path = `${path}/sample/brain`;
-          break;
-        case 2: 
-          dicImagesT = importAll(require.context(`./assests/sample/skull_bone`, false, /\.(dcm|DCM|jpe?g|svg)$/));
-          path = `${path}/sample/skull_bone`;
-          break;
-        case 3: 
+        case 1: 
         dicImagesT = importAll(require.context(`./assests/series-00000`, false, /\.(dcm|DCM|jpe?g|svg)$/));
           path = `${path}/series-00000`;
           break;
+        case 2 : 
+         dicImagesT = importAll(require.context(`./assests/sample/brain`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/sample/brain`;
+          break;
+        case 3: 
+          dicImagesT = importAll(require.context(`./assests/sample/skull_bone`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/sample/skull_bone`;
+          break;
         case 4: 
-        dicImagesT = importAll(require.context(`./assests/test1`, false, /\.(dcm|DCM|jpe?g|svg)$/));
-          path = `${path}/test1`;
+        dicImagesT = importAll(require.context(`./assests/103390636/20210217/brain`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/103390636/20210217/brain`;
           break;
         case 5: 
-        dicImagesT = importAll(require.context(`./assests/test2`, false, /\.(dcm|DCM|jpe?g|svg)$/));
-          path = `${path}/test2`;
-          break;
-        case 6: 
         dicImagesT = importAll(require.context(`./assests/101453181/20210301/brain`, false, /\.(dcm|DCM|jpe?g|svg)$/));
           path = `${path}/101453181/20210301/brain`;
           break;
-        case 7: 
+        case 6: 
         dicImagesT = importAll(require.context(`./assests/101453181/20210301/skull_bone`, false, /\.(dcm|DCM|jpe?g|svg)$/));
           path = `${path}/101453181/20210301/skull_bone`;
           break;
-        case 8: 
+        case 7: 
         dicImagesT = importAll(require.context(`./assests/101453181/20210303/brain`, false, /\.(dcm|DCM|jpe?g|svg)$/));
           path = `${path}/101453181/20210303/brain`;
           break;
-        case 9: 
+        case 8: 
         dicImagesT = importAll(require.context(`./assests/101453181/20210303/skull_bone`, false, /\.(dcm|DCM|jpe?g|svg)$/));
           path = `${path}/101453181/20210303/skull_bone`;
           break;
+        case 9: 
+        dicImagesT = importAll(require.context(`./assests/103395364/20210122/brain`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+          path = `${path}/103395364/20210122/brain`;
+          break;
+        case 10: 
+        dicImagesT = importAll(require.context(`./assests/103395364/20210122/skull_bone`, false, /\.(dcm|DCM|jpe?g|svg)$/));
+        path = `${path}/103395364/20210122/skull_bone`;
+          break;
         default:
           dicImagesT = importAll(require.context(`./assests/test1`, false, /\.(dcm|DCM|jpe?g|svg)$/));
-          path = `${path}/test2`;
+          path = `${path}/test1`;
       }
       this.getDicomText()
       // load dicom file
