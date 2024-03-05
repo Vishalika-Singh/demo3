@@ -146,7 +146,7 @@ class DwvComponent extends React.Component {
     .then(data => {
       console.log('Save successful:', data);
       // You can perform additional actions after a successful save
-      window.alert('Data is updated successfully!');
+      window.alert('Report is updated successfully!');
     })
     .catch(error => {
       console.error('Save error:', error);
@@ -222,7 +222,7 @@ class DwvComponent extends React.Component {
     return (
       <div id="dwv">
         <LinearProgress variant="determinate" value={loadProgress} />
-        <Stack  direction="row" spacing={1} padding={1} justifyContent="center">
+        <Stack  direction="row" spacing={1} padding={1} style={this.state.enableDicomText ? {marginLeft:300} :{justifyContent: 'center'} }>
           <ToggleButtonGroup size="small"
             color="primary"
             value={this.state.selectedTool}
@@ -292,7 +292,7 @@ class DwvComponent extends React.Component {
                 this.setState({ dicomText: e.target.value });
               }}
               rows={27} // Specify the number of rows
-              // cols={40} // Specify the number of columns
+              cols={40} // Specify the number of columns
               style={{
                 width: '-webkit-fill-available',
                 fontSize: '16px', // Increase font size to 16px
