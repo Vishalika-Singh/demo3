@@ -11,7 +11,7 @@
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.19",
     "@mui/material": "^5.15.16",
-    "@mui/styles": "^5.15.19",
+    "@mui/styles": "^5.15.20",
     "babel-plugin-preval": "^5.1.0",
     "dwv": "0.32.6",
     "react": "^18.2.0",
