@@ -13,7 +13,7 @@
     "@mui/material": "^5.15.20",
     "@mui/styles": "^5.15.21",
     "babel-plugin-preval": "^5.1.0",
-    "dwv": "0.32.6",
+    "dwv": "0.33.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1"
